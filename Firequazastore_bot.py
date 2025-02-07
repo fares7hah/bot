@@ -414,6 +414,33 @@ def send_welcome(message):
 
 @bot.callback_query_handler(func=lambda call: call.data == "buy_bots")
 def buy_bots(call):
+    user_id = call.from_user.id
+    # التحقق مما إذا كان البوت متوقفًا
+    with sqlite3.connect('bot_data.db') as conn:
+        cursor = conn.cursor()
+        cursor.execute('SELECT status FROM bot_status ORDER BY id DESC LIMIT 1')
+        bot_status = cursor.fetchone()
+        if bot_status and bot_status[0] == "stopped":
+            # التحقق مما إذا كان المستخدم إداريًا
+            cursor.execute('SELECT 1 FROM admins WHERE user_id = ?', (user_id,))
+            is_admin = cursor.fetchone() is not None
+
+            if not is_admin:
+                bot.edit_message_text(
+                    chat_id=call.message.chat.id,
+                    message_id=call.message.message_id,
+                    text="سيتم تشغيل البوت قريبا ‼️."
+                )
+                return
+
+    # تحقق مما إذا كان المستخدم محظورًا
+    if is_user_banned(user_id):
+        bot.edit_message_text(
+            chat_id=call.message.chat.id,
+            message_id=call.message.message_id,
+            text="لقد تم حظرك من البوت ⛔"
+        )
+        return  # إيقاف الدالة إذا كان المستخدم محظورًا
     markup = InlineKeyboardMarkup(row_width=1)
     markup.add(
         InlineKeyboardButton("شراء بوت | buy a bot 🤖", callback_data="شراء بوت | buy a bot 🤖"),
@@ -429,11 +456,37 @@ def buy_bots(call):
 
 @bot.callback_query_handler(func=lambda call: call.data == "شراء بوت | buy a bot 🤖")
 def send_bot_purchase_info(call):
+    user_id = call.from_user.id
+    # التحقق مما إذا كان البوت متوقفًا
+    with sqlite3.connect('bot_data.db') as conn:
+        cursor = conn.cursor()
+        cursor.execute('SELECT status FROM bot_status ORDER BY id DESC LIMIT 1')
+        bot_status = cursor.fetchone()
+        if bot_status and bot_status[0] == "stopped":
+            # التحقق مما إذا كان المستخدم إداريًا
+            cursor.execute('SELECT 1 FROM admins WHERE user_id = ?', (user_id,))
+            is_admin = cursor.fetchone() is not None
+
+            if not is_admin:
+                bot.edit_message_text(
+                    chat_id=call.message.chat.id,
+                    message_id=call.message.message_id,
+                    text="سيتم تشغيل البوت قريبا ‼️."
+                )
+                return
+
+    # تحقق مما إذا كان المستخدم محظورًا
+    if is_user_banned(user_id):
+        bot.edit_message_text(
+            chat_id=call.message.chat.id,
+            message_id=call.message.message_id,
+            text="لقد تم حظرك من البوت ⛔"
+        )
+        return  # إيقاف الدالة إذا كان المستخدم محظورًا
     bot.send_message(
         chat_id=call.message.chat.id,
-        text="لشراء بوتات بأسعار جيدة تواصل معنا على الرقم 0991971467 عن طريق WhatsApp"
+        text="لشراء بوتات بأسعار جيدة تواصل معنا على الرقم 0967500378 عن طريق WhatsApp"
     )
-
 
 @bot.callback_query_handler(func=lambda call: call.data.startswith("process_purchase_"))
 def process_purchase(call):
