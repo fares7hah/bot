@@ -55,7 +55,9 @@ print("3")
 print("5")
 
 # إعدادات البوت
-TOKEN = "8164785106:AAE39aLfawczYWZ-IikCjU-XO51WbSWcar4"  # ضع رمز التوكن الخاص بك
+import os
+
+TOKEN = os.getenv("TOKEN1")
 bot = telebot.TeleBot(TOKEN)
 
 
