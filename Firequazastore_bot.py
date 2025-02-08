@@ -228,8 +228,9 @@ setup_prices_table()
 
 
 # Bot token and admin ID
-TOKEN = "7862844238:AAEpYUvlVpzmQLRep10omU-0FbM_dil20Ic"  # Replace with your bot token
-# إنشاء البوت
+import os
+
+TOKEN = os.getenv("TOKEN")
 bot = telebot.TeleBot(TOKEN)
 
 def initialize_user_data(user_id, first_name='', last_name=''):
